@@ -115,7 +115,13 @@ class BingWallpaperFrame(WallpaperFrame):
 class UnsplashWallpaperFrame(WallpaperFrame):
     def __init__(self, parent):
         super(UnsplashWallpaperFrame, self).__init__(parent, title='UnsplashWallpaper',size=(600, 600))
-        SetWallpaper.SetWallpaper(r"E:\code\github\CAOJINGYOU\PyWallpaper\wxPython2.jpg")
+
+        imageFileName = NetUtility.DownloadBingImageFile()
+        if not imageFileName is None:
+            SetWallpaper.SetWallpaper(imageFileName)
+            strTempFile = os.path.join(os.getcwd(),"image\\temp.jpg")
+            ImageUtility.resize_image(imageFileName,strTempFile,192)
+
 if __name__ == "__main__":
     app = PyWallpaperApp()
     app.MainLoop()

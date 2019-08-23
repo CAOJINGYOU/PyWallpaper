@@ -19,3 +19,8 @@ def SetWallpaper(imgPath):
     new_bmp_path = os.path.join(img_dir,'wallpaper.bmp')
     bmpImage.save(new_bmp_path, "BMP")
     set_wallpaper_from_bmp(new_bmp_path)'''
+
+def GetSystemMetricsXY():
+    x = win32api.GetSystemMetrics(win32con.SM_CXSCREEN)  # 获得屏幕分辨率X轴
+    y = win32api.GetSystemMetrics(win32con.SM_CYSCREEN)  # 获得屏幕分辨率Y轴
+    return str(x)+"x"+str(y)

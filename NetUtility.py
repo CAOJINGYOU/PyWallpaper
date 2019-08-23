@@ -1,13 +1,17 @@
 import os
 import sys
 import traceback
+import time
 import datetime
 import LogHandler
 import requests
 import json
+import SetWallpaper
 
 bingUrl = "https://www.bing.com"
 bingJsonUrl = "https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=zh-cn"
+
+unsplashUrl = "https://source.unsplash.com/random/"
 
 urlHeaders={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'}
 
@@ -32,6 +36,26 @@ def DownloadUrlFile(strImageSrc, strNewUrl):
         f.write(response.content)
 
 def DownloadBingImageFile():
+    try:
+        text = GetUrlText(bingJsonUrl)
+        jsonText = json.loads(text)
+        unsplashImageUrl = unsplashUrl+SetWallpaper.GetSystemMetricsXY()
+        log.logger.info(unsplashImageUrl)
+        unsplashImagePath = os.path.join(os.getcwd(), "image\\Unsplash")
+        if os.path.exists(unsplashImagePath) == False:
+            os.makedirs(unsplashImagePath)
+        strDate = time.strftime("%Y-%m-%d-%H-%M-%S.jpg",time.localtime())
+        unsplashImageFileName = os.path.join(unsplashImagePath, strDate)
+        if os.path.exists(unsplashImageFileName) == False:
+            DownloadUrlFile(unsplashImageUrl,unsplashImageFileName)
+        if os.path.exists(unsplashImageFileName):
+            return unsplashImageFileName
+    except :
+        log.logger.exception(sys.exc_info())
+    else:
+        return None
+
+def DownloadUnsplashImageFile():
     try:
         text = GetUrlText(bingJsonUrl)
         jsonText = json.loads(text)
