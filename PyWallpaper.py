@@ -3,6 +3,9 @@ import os
 import sys
 import wx.adv
 import JsonConfig
+import SetWallpaper
+import NetUtility
+import ImageUtility
 
 def ResourcePath(relativePath):
     basePath = getattr(sys,"_MEIPASS",os.path.dirname(os.path.abspath(__file__)))
@@ -103,10 +106,16 @@ class BingWallpaperFrame(WallpaperFrame):
     def __init__(self, parent):
         super(BingWallpaperFrame, self).__init__(parent, title='BingWallpaper',size=(600, 600))
 
+        imageFileName = NetUtility.DownloadBingImageFile()
+        if not imageFileName is None:
+            #strTempFile = os.path.join(os.getcwd(),"image\\temp.jpg")
+            #ImageUtility.compress_image(imageFileName,strTempFile)
+            SetWallpaper.SetWallpaper(imageFileName)
+
 class UnsplashWallpaperFrame(WallpaperFrame):
     def __init__(self, parent):
         super(UnsplashWallpaperFrame, self).__init__(parent, title='UnsplashWallpaper',size=(600, 600))
-
+        SetWallpaper.SetWallpaper(r"E:\code\github\CAOJINGYOU\PyWallpaper\wxPython2.jpg")
 if __name__ == "__main__":
     app = PyWallpaperApp()
     app.MainLoop()
