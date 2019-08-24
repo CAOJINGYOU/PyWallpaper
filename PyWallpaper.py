@@ -17,15 +17,11 @@ icoFileName = os.path.join(ResourcePath("."), "desktop.ico")
 class PyWallpaperApp(wx.App):
     def OnInit(self):
         jsonConfig = JsonConfig.InitJsonConfig()
-        title = ""
-        if jsonConfig["type"] == "0":
-            title = "BingWallpaper"
-        elif jsonConfig["type"] == "1":
-            title = "UnsplashWallpaper"
 
-        self.thisFrame =WallpaperFrame(None,"UnsplashWallpaper")
+        self.thisFrame =WallpaperFrame(None,"PyWallpaper")
 
         TimerWallpaper.TimerWallpaper()
+
         return True
 
     def OnExit(self):
@@ -37,6 +33,9 @@ class MyTaskBarIcon(wx.adv.TaskBarIcon):
     ID_ABOUT = wx.NewId()  # 菜单选项“关于”的ID
     ID_EXIT = wx.NewId()  # 菜单选项“退出”的ID
     ID_SHOW_WEB = wx.NewId()  # 菜单选项“显示页面”的ID
+    ID_TEM_BING = wx.NewId()
+    ID_TEM_UNSPLASH_RANDOM = wx.NewId()
+    ID_TEM_UNSPLASH_YHCAO = wx.NewId()
 
     def __init__(self,frame,title):
         wx.adv.TaskBarIcon.__init__(self)
@@ -47,9 +46,13 @@ class MyTaskBarIcon(wx.adv.TaskBarIcon):
         self.Bind(wx.EVT_MENU, self.onShowWeb, id=self.ID_SHOW_WEB)  # 绑定“显示页面”选项的点击事件
         self.Bind(wx.adv.EVT_TASKBAR_LEFT_DCLICK, self.OnTaskBarLeftDClick)
 
+        self.Bind(wx.EVT_MENU, self.onTemBing, id=self.ID_TEM_BING)
+        self.Bind(wx.EVT_MENU, self.onTemUnsplashRandom, id=self.ID_TEM_UNSPLASH_RANDOM)
+        self.Bind(wx.EVT_MENU, self.onTemUnsplashYhcao, id=self.ID_TEM_UNSPLASH_YHCAO)
+
     # “关于”选项的事件处理器
     def onAbout(self, event):
-        wx.MessageBox('程序作者：yhcao\n最后更新日期：2019-8-22', "关于")
+        wx.MessageBox('程序作者：yhcao\n最后更新日期：2019-8-25', "关于")
 
     # “退出”选项的事件处理器
     def onExit(self, event):
@@ -62,17 +65,39 @@ class MyTaskBarIcon(wx.adv.TaskBarIcon):
             self.frame.Show(True)
         self.frame.Raise()
 
+    def onTemBing(self,event):
+        if not self.frame.IsShown():
+            jsonObj = {"type":"0","timer":"3600","unsplashurl":"https://source.unsplash.com/random/"}
+            JsonConfig.WriteJsonConfig(jsonObj)
+            TimerWallpaper.TimerWallpaperRestart()
+
+    def onTemUnsplashRandom(self, event):
+        if not self.frame.IsShown():
+            jsonObj = {"type":"1","timer":"3600","unsplashurl":"https://source.unsplash.com/random/"}
+            JsonConfig.WriteJsonConfig(jsonObj)
+            TimerWallpaper.TimerWallpaperRestart()
+    def onTemUnsplashYhcao(self, event):
+        if not self.frame.IsShown():
+            jsonObj = {"type":"1","timer":"3600","unsplashurl":"https://source.unsplash.com/user/yhcao/likes/"}
+            JsonConfig.WriteJsonConfig(jsonObj)
+            TimerWallpaper.TimerWallpaperRestart()
+
     # 创建菜单选项
     def CreatePopupMenu(self):
         menu = wx.Menu()
-        for mentAttr in self.getMenuAttrs():
-            menu.Append(mentAttr[1], mentAttr[0])
+        menu.Append(self.ID_SHOW_WEB, "显示")
+
+        menuTemplate = wx.Menu()
+        menuTemplate.Append(self.ID_TEM_BING, "bing")
+        menuTemplate.Append(self.ID_TEM_UNSPLASH_RANDOM, "unsplash-random")
+        menuTemplate.Append(self.ID_TEM_UNSPLASH_YHCAO, "unsplash-yhcao")
+
+        menu.AppendMenu(wx.ID_ANY, "模板",menuTemplate)
+        menu.Append(self.ID_ABOUT, "关于")
+        menu.Append(self.ID_EXIT, "退出")
+
         return menu
 
-    # 获取菜单的属性元组
-    def getMenuAttrs(self):
-        return [('显示', self.ID_SHOW_WEB),('关于', self.ID_ABOUT),
-                ('退出', self.ID_EXIT)]
 
     def OnTaskBarLeftDClick(self, event):
         if self.frame.IsIconized():
@@ -83,7 +108,7 @@ class MyTaskBarIcon(wx.adv.TaskBarIcon):
 
 class WallpaperFrame(wx.Frame):
     def __init__(self, parent, title):
-        super(WallpaperFrame, self).__init__(parent, title=title,size=(300, 400))
+        super(WallpaperFrame, self).__init__(parent, title=title,size=(450, 200))
 
         self.SetIcon(wx.Icon(icoFileName))
 
@@ -119,6 +144,7 @@ class WallpaperFrame(wx.Frame):
             jsonString = self.textCtrlSourceJson.GetValue()
             jsonObj = JsonConfig.StringToJsonObj(jsonString)
             JsonConfig.WriteJsonConfig(jsonObj)
+            TimerWallpaper.TimerWallpaperRestart()
 
     def OnClose(self, event):
         self.Hide()
@@ -127,6 +153,7 @@ class WallpaperFrame(wx.Frame):
 
     def DestroyTaskBarIcon(self):
         self.taskBarIcon.Destroy()
+        self.Destroy()
 
 if __name__ == "__main__":
     app = PyWallpaperApp()

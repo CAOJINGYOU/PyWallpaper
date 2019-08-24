@@ -13,9 +13,20 @@ def TimerWallpaperStop():
     global timerStop
     timerStop = True
     global timerWallpaper
+    if not timerWallpaper is None:
+        timerWallpaper.cancel()
     timerWallpaper = threading.Timer(1, TimerWallpaper)
+    timerWallpaper.start()
+
+def TimerWallpaperRestart():
+    global timerWallpaper
+    if not timerWallpaper is None:
+        timerWallpaper.cancel()
+    timerWallpaper = threading.Timer(1, TimerWallpaper)
+    timerWallpaper.start()
 
 def TimerWallpaper():
+
     global timerStop
     global timerWallpaper
     if timerStop:
@@ -27,9 +38,11 @@ def TimerWallpaper():
     jsonConfig = JsonConfig.InitJsonConfig()
     nInterval = int(jsonConfig["timer"])
     if jsonConfig["type"] == "0":
-        timerWallpaper = threading.Timer(nInterval, TimerBingWallpaper)
+        TimerBingWallpaper()
+        timerWallpaper = threading.Timer(nInterval, TimerWallpaper)
     elif jsonConfig["type"] == "1":
-        timerWallpaper = threading.Timer(nInterval, TimerUnsplashWallpaper)
+        TimerUnsplashWallpaper()
+        timerWallpaper = threading.Timer(nInterval, TimerWallpaper)
     timerWallpaper.start()
 
 def TimerBingWallpaper():
@@ -39,7 +52,6 @@ def TimerBingWallpaper():
         if imageFileWallpaper != imageFileName:
             SetWallpaper.SetWallpaper(imageFileName)
             imageFileWallpaper = imageFileName
-    TimerWallpaper()
 
 def TimerUnsplashWallpaper():
     imageFileName = NetUtility.DownloadUnsplashImageFile()
@@ -48,7 +60,6 @@ def TimerUnsplashWallpaper():
         if imageFileWallpaper != imageFileName:
             SetWallpaper.SetWallpaper(imageFileName)
             imageFileWallpaper = imageFileName
-    TimerWallpaper()
 
 
 
