@@ -25,7 +25,7 @@ def WriteJsonObj(jsonobj,filename):
 def InitJsonConfig():
     jsonConfig = ReadJsonObj(jsonFileName)
     if jsonConfig is None:
-        jsonConfig ={"type":"1","timer":"3600","unsplashurl":"https://source.unsplash.com/random/"}
+        jsonConfig ={"type":"0","timer":"3600","unsplashurl":"https://source.unsplash.com/random/"}
         WriteJsonObj(jsonConfig,jsonFileName)
     return jsonConfig
 
