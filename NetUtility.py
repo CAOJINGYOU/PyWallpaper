@@ -3,10 +3,13 @@ import sys
 import traceback
 import time
 import datetime
+import urllib3
 import LogHandler
 import requests
 import json
 import SetWallpaper
+import JsonConfig
+
 
 bingUrl = "https://www.bing.com"
 bingJsonUrl = "https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=zh-cn"
@@ -16,6 +19,8 @@ unsplashUrl = "https://source.unsplash.com/random/"
 urlHeaders={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'}
 
 log = LogHandler.Logger("PyWallpaper")
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def GetUrlText(url):
     try:
@@ -35,18 +40,18 @@ def DownloadUrlFile(strImageSrc, strNewUrl):
     with open(strNewUrl, 'wb') as f:
         f.write(response.content)
 
-def DownloadBingImageFile():
+def DownloadUnsplashImageFile():
     try:
-        text = GetUrlText(bingJsonUrl)
-        jsonText = json.loads(text)
-        unsplashImageUrl = unsplashUrl+SetWallpaper.GetSystemMetricsXY()
-        log.logger.info(unsplashImageUrl)
         unsplashImagePath = os.path.join(os.getcwd(), "image\\Unsplash")
         if os.path.exists(unsplashImagePath) == False:
             os.makedirs(unsplashImagePath)
         strDate = time.strftime("%Y-%m-%d-%H-%M-%S.jpg",time.localtime())
         unsplashImageFileName = os.path.join(unsplashImagePath, strDate)
         if os.path.exists(unsplashImageFileName) == False:
+            jsonConfig = JsonConfig.InitJsonConfig()
+            unsplashUrl = jsonConfig["unsplashurl"]
+            unsplashImageUrl = unsplashUrl + SetWallpaper.GetSystemMetricsXY()
+            log.logger.info(unsplashImageUrl)
             DownloadUrlFile(unsplashImageUrl,unsplashImageFileName)
         if os.path.exists(unsplashImageFileName):
             return unsplashImageFileName
@@ -55,19 +60,19 @@ def DownloadBingImageFile():
     else:
         return None
 
-def DownloadUnsplashImageFile():
+def DownloadBingImageFile():
     try:
-        text = GetUrlText(bingJsonUrl)
-        jsonText = json.loads(text)
-        bingImageUrl = bingUrl+jsonText["images"][0]["url"]
-        log.logger.info(bingImageUrl)
-
         bingImagePath = os.path.join(os.getcwd(), "image\\Bing")
         if os.path.exists(bingImagePath) == False:
             os.makedirs(bingImagePath)
         strDate = datetime.date.today().strftime("%Y-%m-%d.jpg")
         bingImageFileName = os.path.join(bingImagePath, strDate)
         if os.path.exists(bingImageFileName) == False:
+            text = GetUrlText(bingJsonUrl)
+            jsonText = json.loads(text)
+            bingImageUrl = bingUrl + jsonText["images"][0]["url"]
+            log.logger.info(bingImageUrl)
+
             DownloadUrlFile(bingImageUrl,bingImageFileName)
         if os.path.exists(bingImageFileName):
             return bingImageFileName
