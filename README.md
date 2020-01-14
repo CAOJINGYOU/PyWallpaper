@@ -1,4 +1,14 @@
-# PyWallpaper
+# PyWallpaper #
+
+三种默认模板:
+
+![TIM截图20200114163531.jpg](https://i.loli.net/2020/01/14/tujSGN1p4xeJK8b.jpg)
+
+可个性化修改:
+
+![TIM截图20200114163913.jpg](https://i.loli.net/2020/01/14/4jBEiqULvGDAMPn.jpg)
+
+# win32api #
 
 [https://www.microsoft.com/zh-CN/download/details.aspx?id=35844](https://www.microsoft.com/zh-CN/download/details.aspx?id=35844)
 
@@ -16,7 +26,7 @@
 	    # 刷新桌面
 	    win32gui.SystemParametersInfo(win32con.SPI_SETDESKWALLPAPER, img_path, win32con.SPIF_SENDWININICHANGE)
 	
-# 系统分辨率 # 
+# 系统分辨率 #
 
 	from win32api import GetSystemMetrics
     width = GetSystemMetrics(0)
