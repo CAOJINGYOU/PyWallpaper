@@ -65,7 +65,7 @@ def DownloadBingImageFile():
         bingImagePath = os.path.join(os.getcwd(), "image\\Bing")
         if os.path.exists(bingImagePath) == False:
             os.makedirs(bingImagePath)
-        strDate = datetime.date.today().strftime("%Y-%m-%d.jpg")
+        strDate = datetime.date.today().strftime("%Y-%m-%d.png")
         bingImageFileName = os.path.join(bingImagePath, strDate)
         if os.path.exists(bingImageFileName) == False:
             text = GetUrlText(bingJsonUrl)
